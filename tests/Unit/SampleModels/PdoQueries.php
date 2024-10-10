@@ -69,7 +69,7 @@ class PdoQueries
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function selectQueryWithNamedPlaceholdersAndFetchAll(): ?array
+    public function selectQueryWithNamedPlaceholdersAndFetchAll(): array|bool
     {
         // select a particular user by id
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id=:id");

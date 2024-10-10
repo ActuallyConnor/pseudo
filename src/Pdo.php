@@ -13,26 +13,26 @@ class Pdo extends \PDO
     private QueryLog $queryLog;
 
     /**
-     * @param  ResultCollection|null  $collection
+     * @param ResultCollection|null $collection
      */
     public function __construct(
         ResultCollection $collection = null
     ) {
         $this->mockedQueries = $collection ?? new ResultCollection();
-        $this->queryLog      = new QueryLog();
+        $this->queryLog = new QueryLog();
     }
 
     /**
      * @throws PseudoException|Throwable
      */
-    public function prepare($query, $options = null) : PdoStatement
+    public function prepare($query, $options = null): PdoStatement
     {
         $result = $this->mockedQueries->getResult($query);
 
         return new PdoStatement($result, $this->queryLog, $query);
     }
 
-    public function beginTransaction() : bool
+    public function beginTransaction(): bool
     {
         if (!$this->inTransaction) {
             $this->inTransaction = true;
@@ -43,7 +43,7 @@ class Pdo extends \PDO
         return false;
     }
 
-    public function commit() : bool
+    public function commit(): bool
     {
         if ($this->inTransaction()) {
             $this->inTransaction = false;
@@ -54,7 +54,7 @@ class Pdo extends \PDO
         return false;
     }
 
-    public function rollBack() : bool
+    public function rollBack(): bool
     {
         if ($this->inTransaction()) {
             $this->inTransaction = false;
@@ -65,12 +65,12 @@ class Pdo extends \PDO
         return false;
     }
 
-    public function inTransaction() : bool
+    public function inTransaction(): bool
     {
         return $this->inTransaction;
     }
 
-    public function exec($statement) : false|int
+    public function exec($statement): false|int
     {
         $result = $this->query($statement);
 
@@ -78,14 +78,14 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param  string  $query
-     * @param  int|null  $fetchMode
-     * @param  mixed  ...$fetchModeArgs
+     * @param string $query
+     * @param int|null $fetchMode
+     * @param mixed ...$fetchModeArgs
      *
      * @return PdoStatement
      * @throws PseudoException|Throwable
      */
-    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs) : PdoStatement
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PdoStatement
     {
         if ($this->mockedQueries->exists($query)) {
             $result = $this->mockedQueries->getResult($query);
@@ -101,12 +101,12 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param  null  $name
+     * @param null $name
      *
      * @return false|string
      * @throws PseudoException
      */
-    public function lastInsertId($name = null) : false|string
+    public function lastInsertId($name = null): false|string
     {
         $result = $this->getLastResult();
 
@@ -121,7 +121,7 @@ class Pdo extends \PDO
      * @return Result|false
      * @throws PseudoException|Throwable
      */
-    private function getLastResult() : Result|false
+    private function getLastResult(): Result|false
     {
         try {
             $lastQuery = $this->queryLog[count($this->queryLog) - 1];
@@ -133,9 +133,9 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param  string  $filePath
+     * @param string $filePath
      */
-    public function save(string $filePath) : void
+    public function save(string $filePath): void
     {
         file_put_contents($filePath, serialize($this->mockedQueries));
     }
@@ -143,7 +143,7 @@ class Pdo extends \PDO
     /**
      * @param $filePath
      */
-    public function load($filePath) : void
+    public function load($filePath): void
     {
         $this->mockedQueries = unserialize(file_get_contents($filePath));
     }
@@ -152,16 +152,21 @@ class Pdo extends \PDO
      * @param string $sql
      * @param array|null $params
      * @param mixed $expectedResults
+     * @param bool $executionResult
      */
-    public function mock(string $sql, ?array $params = null, mixed $expectedResults = null) : void
-    {
-        $this->mockedQueries->addQuery($sql, $params, $expectedResults);
+    public function mock(
+        string $sql,
+        ?array $params = null,
+        mixed $expectedResults = null,
+        bool $executionResult = true
+    ): void {
+        $this->mockedQueries->addQuery($sql, $params, $expectedResults, $executionResult);
     }
 
     /**
      * @return ResultCollection
      */
-    public function getMockedQueries() : ResultCollection
+    public function getMockedQueries(): ResultCollection
     {
         return $this->mockedQueries;
     }

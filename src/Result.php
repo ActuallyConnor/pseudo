@@ -7,7 +7,7 @@ use Pseudo\Exceptions\PseudoException;
 
 class Result
 {
-    private array $rows = [];
+    private array|bool $rows = [];
     private ?bool $executionResult = null;
     private bool $isParameterized = false;
     private string $errorCode;
@@ -17,7 +17,7 @@ class Result
     private int $rowOffset = 0;
     private array $params = [];
 
-    public function __construct($rows = null, $params = null, $executionResult = null)
+    public function __construct(array|bool $rows = null, $params = null, $executionResult = null)
     {
         if (is_array($rows)) {
             if ($params) {
@@ -26,6 +26,8 @@ class Result
             } else {
                 $this->rows = $rows;
             }
+        } elseif (is_bool($rows)) {
+            $this->rows = $rows;
         }
 
         $this->executionResult = $executionResult;
@@ -63,6 +65,10 @@ class Result
 
     public function getRows(array $params = [])
     {
+        if (is_bool($this->rows)) {
+            return $this->rows;
+        }
+
         if (!empty($this->params) && empty($params)) {
             $params = $this->params;
         }

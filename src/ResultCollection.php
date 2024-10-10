@@ -15,16 +15,20 @@ class ResultCollection implements Countable
         return count($this->queries);
     }
 
-    public function addQuery(string $sql, ?array $params = null, mixed $results = null): void
-    {
+    public function addQuery(
+        string $sql,
+        ?array $params = null,
+        mixed $results = null,
+        bool $executionResult = true
+    ): void {
         $query = new ParsedQuery($sql);
 
         if (is_array($results)) {
-            $storedResults = new Result($results, $params);
+            $storedResults = new Result($results, $params, $executionResult);
         } elseif ($results instanceof Result) {
             $storedResults = $results;
         } elseif (is_bool($results)) {
-            $storedResults = new Result(null, $params, $results);
+            $storedResults = new Result($results, $params, $executionResult);
         } elseif ($results instanceof Throwable) {
             $storedResults = $results;
         } else {

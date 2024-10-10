@@ -40,7 +40,7 @@ class ResultCollectionTest extends TestCase
     {
         $collection = new ResultCollection();
 
-        $collection->addQuery('SELECT 1', [], true);
+        $collection->addQuery('SELECT 1', [], []);
 
         $result = $collection->getResult("SELECT 1");
 

@@ -24,7 +24,6 @@ class PdoQueriesTest extends TestCase
     }
 
 
-
     public function testSelectQueryWithNoParameters(): void
     {
         $this->pdo->mock(
@@ -104,6 +103,17 @@ class PdoQueriesTest extends TestCase
         $this->assertEquals([['id' => 1, 'name' => 'John Doe']], $data);
     }
 
+    public function testSelectQueryWithNamedPlaceholdersAndFetchAllFails(): void
+    {
+        $this->pdo->mock(
+            'SELECT * FROM users WHERE id=:id',
+            ['id' => 1],
+            false
+        );
+
+        $this->assertFalse($this->pdoQueries->selectQueryWithNamedPlaceholdersAndFetchAll());
+    }
+
     public function testDeleteWithPlaceholder(): void
     {
         $this->pdo->mock(
@@ -121,6 +131,7 @@ class PdoQueriesTest extends TestCase
         $this->pdo->mock(
             'DELETE FROM users WHERE id = ?',
             [1],
+            null,
             false
         );
 
