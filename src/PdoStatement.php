@@ -82,7 +82,7 @@ class PdoStatement extends \PDOStatement
         // scrolling cursors not implemented
         $row = $this->result->nextRow();
         if ($row) {
-            return $this->proccessFetchedRow($row, $mode);
+            return $this->processFetchedRow($row, $mode);
         }
 
         return false;
@@ -123,7 +123,7 @@ class PdoStatement extends \PDOStatement
     {
         $row = $this->result->nextRow();
         if ($row) {
-            $row = $this->proccessFetchedRow($row, Pdo::FETCH_NUM);
+            $row = $this->processFetchedRow($row, Pdo::FETCH_NUM);
 
             return $row[$column];
         }
@@ -136,13 +136,13 @@ class PdoStatement extends \PDOStatement
         $rows        = $this->result->getRows() ?? [];
         $returnArray = [];
         foreach ($rows as $row) {
-            $returnArray[] = $this->proccessFetchedRow($row, $mode);
+            $returnArray[] = $this->processFetchedRow($row, $mode);
         }
 
         return $returnArray;
     }
 
-    private function proccessFetchedRow($row, $fetchMode) : mixed
+    private function processFetchedRow($row, $fetchMode) : mixed
     {
         $i = 0;
         switch ($fetchMode ?: $this->fetchMode) {
@@ -185,17 +185,17 @@ class PdoStatement extends \PDOStatement
 
     /**
      * @param  string  $class
-     * @param  null  $constructorArgs
+     * @param  array  $constructorArgs
      *
      * @return object|false
      * @throws ReflectionException
      */
-    public function fetchObject($class = stdClass::class, $constructorArgs = null) : object|false
+    public function fetchObject($class = stdClass::class, array $constructorArgs = []) : object|false
     {
         $row = $this->result->nextRow();
         if ($row) {
             $reflect = new ReflectionClass($class);
-            $obj     = $reflect->newInstanceArgs($constructorArgs ?: []);
+            $obj     = $reflect->newInstanceArgs($constructorArgs);
             foreach ($row as $key => $val) {
                 $obj->$key = $val;
             }

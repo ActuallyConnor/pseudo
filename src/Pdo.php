@@ -103,18 +103,12 @@ class Pdo extends \PDO
     /**
      * @param  null  $name
      *
-     * @return false|string
-     * @throws PseudoException
+     * @return string|false
+     * @throws PseudoException|Throwable
      */
-    public function lastInsertId($name = null) : false|string
+    public function lastInsertId($name = null) : string|false
     {
-        $result = $this->getLastResult();
-
-        if (!$result) {
-            return false;
-        }
-
-        return $result->getInsertId();
+        return $this->getLastResult() !== false ? $this->getLastResult()->getInsertId() : false;
     }
 
     /**
@@ -149,9 +143,9 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param string $sql
-     * @param array|null $params
-     * @param mixed $expectedResults
+     * @param  string  $sql
+     * @param  array|null  $params
+     * @param  mixed  $expectedResults
      */
     public function mock(string $sql, ?array $params = null, mixed $expectedResults = null) : void
     {
