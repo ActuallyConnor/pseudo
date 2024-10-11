@@ -16,7 +16,7 @@ class PdoStatement extends \PDOStatement
      * @var Result;
      */
     private Result $result;
-    private int $fetchMode = PDO::FETCH_BOTH; //DEFAULT FETCHMODE
+    private int $fetchMode = Pdo::FETCH_BOTH; //DEFAULT FETCHMODE
     private array $boundParams = [];
     private array $boundColumns = [];
 
@@ -77,7 +77,7 @@ class PdoStatement extends \PDOStatement
         return $success;
     }
 
-    public function fetch($mode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed
+    public function fetch($mode = null, $cursorOrientation = Pdo::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed
     {
         // scrolling cursors not implemented
         $row = $this->result->nextRow();
@@ -91,7 +91,7 @@ class PdoStatement extends \PDOStatement
     public function bindParam(
         $param,
         &$var,
-        $type = PDO::PARAM_STR,
+        $type = Pdo::PARAM_STR,
         $maxLength = null,
         $driverOptions = null
     ) : bool {
@@ -107,7 +107,7 @@ class PdoStatement extends \PDOStatement
         return true;
     }
 
-    public function bindValue($param, $value, $type = PDO::PARAM_STR) : bool
+    public function bindValue($param, $value, $type = Pdo::PARAM_STR) : bool
     {
         $this->boundParams[$param] = $value;
 
@@ -123,7 +123,7 @@ class PdoStatement extends \PDOStatement
     {
         $row = $this->result->nextRow();
         if ($row) {
-            $row = $this->proccessFetchedRow($row, PDO::FETCH_NUM);
+            $row = $this->proccessFetchedRow($row, Pdo::FETCH_NUM);
 
             return $row[$column];
         }
@@ -131,7 +131,7 @@ class PdoStatement extends \PDOStatement
         return false;
     }
 
-    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args) : array
+    public function fetchAll(int $mode = Pdo::FETCH_DEFAULT, mixed ...$args) : array
     {
         $rows        = $this->result->getRows() ?? [];
         $returnArray = [];
@@ -146,7 +146,7 @@ class PdoStatement extends \PDOStatement
     {
         $i = 0;
         switch ($fetchMode ?: $this->fetchMode) {
-            case PDO::FETCH_BOTH:
+            case Pdo::FETCH_BOTH:
                 $returnRow = [];
                 $keys      = array_keys($row);
                 $c         = 0;
@@ -156,13 +156,13 @@ class PdoStatement extends \PDOStatement
                 }
 
                 return $returnRow;
-            case PDO::FETCH_ASSOC:
+            case Pdo::FETCH_ASSOC:
                 return $row;
-            case PDO::FETCH_NUM:
+            case Pdo::FETCH_NUM:
                 return array_values($row);
-            case PDO::FETCH_OBJ:
+            case Pdo::FETCH_OBJ:
                 return (object)$row;
-            case PDO::FETCH_BOUND:
+            case Pdo::FETCH_BOUND:
                 if ($this->result->isOrdinalArray($this->boundColumns)) {
                     foreach ($this->boundColumns as &$column) {
                         $column = array_values($row)[++$i];
@@ -174,7 +174,7 @@ class PdoStatement extends \PDOStatement
                 }
 
                 return true;
-            case PDO::FETCH_COLUMN:
+            case Pdo::FETCH_COLUMN:
                 $returnRow = array_values($row);
 
                 return $returnRow[0];
