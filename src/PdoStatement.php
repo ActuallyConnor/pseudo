@@ -30,7 +30,7 @@ class PdoStatement extends \PDOStatement
     /**
      * @param  mixed  $result
      * @param  QueryLog|null  $queryLog
-     * @param  null  $statement
+     * @param  string|null  $statement
      */
     public function __construct(mixed $result = null, QueryLog $queryLog = null, $statement = null)
     {
