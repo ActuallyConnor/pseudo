@@ -187,7 +187,7 @@ class PdoStatement extends \PDOStatement
      * @param  string  $class
      * @param  null  $constructorArgs
      *
-     * @return bool|mixed
+     * @return object|false
      * @throws ReflectionException
      */
     public function fetchObject($class = stdClass::class, $constructorArgs = null) : object|false
