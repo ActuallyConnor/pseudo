@@ -8,7 +8,6 @@ use Pseudo\Exceptions\LogicException;
 use Pseudo\Exceptions\PseudoException;
 use ReflectionClass;
 use ReflectionException;
-use stdClass;
 
 class PdoStatement extends \PDOStatement
 {
@@ -31,9 +30,9 @@ class PdoStatement extends \PDOStatement
     private string $statement;
 
     /**
-     * @param mixed $result
-     * @param QueryLog|null $queryLog
-     * @param string $statement
+     * @param  mixed  $result
+     * @param  QueryLog|null  $queryLog
+     * @param  string  $statement
      */
     public function __construct(mixed $result = null, QueryLog $queryLog = null, string $statement = '')
     {
@@ -44,7 +43,7 @@ class PdoStatement extends \PDOStatement
         if (!($queryLog instanceof QueryLog)) {
             $queryLog = new QueryLog();
         }
-        $this->queryLog = $queryLog;
+        $this->queryLog  = $queryLog;
         $this->statement = $statement;
     }
 
@@ -58,14 +57,14 @@ class PdoStatement extends \PDOStatement
     }
 
     /**
-     * @param array<int|string,mixed>|null $params
+     * @param  array<int|string,mixed>|null  $params
      *
      * @return bool
      * @throws LogicException
      */
     public function execute(array $params = null): bool
     {
-        $params = array_merge((array) $params, $this->boundParams);
+        $params = array_merge((array)$params, $this->boundParams);
         $this->result->setParams($params, !empty($this->boundParams));
         $this->queryLog->addQuery($this->statement);
 
@@ -76,7 +75,7 @@ class PdoStatement extends \PDOStatement
         // TODO: I'm not a fan of exception-based logic, but I want to avoid a backwards incompatibility change here.
         // Perhaps we can address in the next major version update
         try {
-            $success = (bool) $this->result->getRows($params ?: []);
+            $success = (bool)$this->result->getRows($params ?: []);
         } catch (PseudoException) {
             $success = false;
         }
@@ -142,25 +141,32 @@ class PdoStatement extends \PDOStatement
     }
 
     /**
-     * @param int $mode
-     * @param mixed ...$args
+     * @param  int  $mode
+     * @param  mixed  ...$args
+     *
      * @return array<int|string,mixed>
      * @throws PseudoException
      */
     public function fetchAll(int $mode = \PDO::FETCH_DEFAULT, mixed ...$args): array
     {
         $rows = $this->result->getRows() ?? [];
-        $returnArray = [];
-        foreach ($rows as $row) {
-            $returnArray[] = $this->processFetchedRow($row, $mode);
+
+        if (is_array($rows)) {
+            return array_map(
+                function ($row) use ($mode) {
+                    return $this->processFetchedRow($row, $mode);
+                },
+                $rows
+            );
         }
 
-        return $returnArray;
+        return [];
     }
 
     /**
-     * @param array<int|string,mixed> $row
-     * @param int|null $fetchMode
+     * @param  array<int|string,mixed>  $row
+     * @param  int|null  $fetchMode
+     *
      * @return mixed
      */
     private function processFetchedRow(array $row, ?int $fetchMode): mixed
@@ -169,8 +175,8 @@ class PdoStatement extends \PDOStatement
         switch ($fetchMode ?: $this->fetchMode) {
             case \PDO::FETCH_BOTH:
                 $returnRow = [];
-                $keys = array_keys($row);
-                $c = 0;
+                $keys      = array_keys($row);
+                $c         = 0;
                 foreach ($keys as $key) {
                     $returnRow[$key] = $row[$key];
                     $returnRow[$c++] = $row[$key];
@@ -182,7 +188,7 @@ class PdoStatement extends \PDOStatement
             case \PDO::FETCH_NUM:
                 return array_values($row);
             case \PDO::FETCH_OBJ:
-                return (object) $row;
+                return (object)$row;
             case \PDO::FETCH_BOUND:
                 if ($this->result->isOrdinalArray($this->boundColumns)) {
                     foreach ($this->boundColumns as &$column) {
@@ -205,8 +211,8 @@ class PdoStatement extends \PDOStatement
     }
 
     /**
-     * @param class-string|null $class
-     * @param array<int|string,mixed> $constructorArgs
+     * @param  class-string|null  $class
+     * @param  array<int|string,mixed>  $constructorArgs
      *
      * @return object|false
      * @throws ReflectionException
@@ -220,7 +226,7 @@ class PdoStatement extends \PDOStatement
         $row = $this->result->nextRow();
         if ($row) {
             $reflect = new ReflectionClass($class);
-            $obj = $reflect->newInstanceArgs($constructorArgs);
+            $obj     = $reflect->newInstanceArgs($constructorArgs);
             foreach ($row as $key => $val) {
                 $obj->$key = $val;
             }
@@ -254,31 +260,33 @@ class PdoStatement extends \PDOStatement
     public function columnCount(): int
     {
         $rows = $this->result->getRows();
-        if ($rows) {
+        if (is_array($rows)) {
             $row = array_shift($rows);
 
-            return count(array_keys($row));
+            if (is_array($row)) {
+                return count(array_keys($row));
+            }
         }
 
         return 0;
     }
 
     /**
-     * @param int $mode
-     * @param null $className
-     * @param mixed ...$params
+     * @param  int  $mode
+     * @param  null  $className
+     * @param  mixed  ...$params
      *
      * @return bool|int
      */
     public function setFetchMode($mode, $className = null, ...$params): bool|int
     {
-        $r = new ReflectionClass(new Pdo());
-        $constants = $r->getConstants();
-        $constantNames = array_keys($constants);
+        $r                    = new ReflectionClass(new Pdo());
+        $constants            = $r->getConstants();
+        $constantNames        = array_keys($constants);
         $allowedConstantNames = array_filter($constantNames, function ($val) {
             return str_starts_with($val, 'FETCH_');
         });
-        $allowedConstantVals = [];
+        $allowedConstantVals  = [];
         foreach ($allowedConstantNames as $name) {
             $allowedConstantVals[] = $constants[$name];
         }

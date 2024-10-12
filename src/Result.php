@@ -8,7 +8,7 @@ use Pseudo\Exceptions\PseudoException;
 class Result
 {
     /**
-     * @var array<int|string,mixed>
+     * @var array<int|string,array<int|string,mixed>>
      */
     private array $rows = [];
     private ?bool $executionResult;
@@ -24,16 +24,16 @@ class Result
     private array $params = [];
 
     /**
-     * @param array<int|string,mixed>|null $rows
-     * @param array<int|string,mixed>|null $params
-     * @param bool|null $executionResult
+     * @param  array<int|string,array<int|string,mixed>>|null  $rows
+     * @param  array<int|string,mixed>|null  $params
+     * @param  bool|null  $executionResult
      */
     public function __construct(?array $rows = null, ?array $params = null, ?bool $executionResult = null)
     {
         if (is_array($rows)) {
             if ($params) {
                 $this->rows[$this->stringifyParameterSet($params)] = $rows;
-                $this->isParameterized = true;
+                $this->isParameterized                             = true;
             } else {
                 $this->rows = $rows;
             }
@@ -43,8 +43,9 @@ class Result
     }
 
     /**
-     * @param array<int|string,mixed> $row
-     * @param array<int|string,mixed> $params
+     * @param  array<int|string,mixed>  $row
+     * @param  array<int|string,mixed>  $params
+     *
      * @return void
      * @throws PseudoException
      */
@@ -68,8 +69,9 @@ class Result
     }
 
     /**
-     * @param array<int|string,mixed> $params
-     * @param bool $parameterize
+     * @param  array<int|string,mixed>  $params
+     * @param  bool  $parameterize
+     *
      * @return void
      */
     public function setParams(array $params, bool $parameterize = false): void
@@ -81,7 +83,8 @@ class Result
     }
 
     /**
-     * @param array<int|string,mixed> $params
+     * @param  array<int|string,mixed>  $params
+     *
      * @return mixed
      * @throws PseudoException
      */
@@ -112,7 +115,7 @@ class Result
     /**
      * Returns the next row if it exists, otherwise returns false
      *
-     * @param array<int|string,mixed> $rows Rows to get row from
+     * @param  array<int|string,mixed>  $rows  Rows to get row from
      *
      * @return false|array<int|string,mixed> Next row (false if it doesn't exist)
      */
@@ -122,7 +125,10 @@ class Result
             return false;
         }
 
-        return $rows[$this->rowOffset];
+        /** @var array<int|string,mixed> $row */
+        $row = $rows[$this->rowOffset];
+
+        return $row;
     }
 
     /**
@@ -161,7 +167,7 @@ class Result
     }
 
     /**
-     * @param string $errorCode
+     * @param  string  $errorCode
      *
      * @throws PseudoException
      */
@@ -183,7 +189,7 @@ class Result
     }
 
     /**
-     * @param string $errorInfo
+     * @param  string  $errorInfo
      */
     public function setErrorInfo(string $errorInfo): void
     {
@@ -209,7 +215,8 @@ class Result
     }
 
     /**
-     * @param array<int|string,mixed> $arr
+     * @param  array<int|string,mixed>  $arr
+     *
      * @return bool
      */
     public function isOrdinalArray(array $arr): bool
@@ -244,7 +251,8 @@ class Result
     }
 
     /**
-     * @param array<int|string,mixed> $params
+     * @param  array<int|string,mixed>  $params
+     *
      * @return string
      */
     private function stringifyParameterSet(array $params): string
@@ -263,20 +271,22 @@ class Result
     }
 
     /**
-     * @param string $parameterKey
-     * @param array<int|string,mixed> $row
+     * @param  string  $parameterKey
+     * @param  array<int|string,mixed>  $row
+     *
      * @return void
      */
     private function initializeParameterizedRows(string $parameterKey, array $row): void
     {
         if (empty($this->rows)) {
             $this->rows[$parameterKey][] = $row;
-            $this->isParameterized = true;
+            $this->isParameterized       = true;
         }
     }
 
     /**
-     * @param array<int|string,mixed> $row
+     * @param  array<int|string,mixed>  $row
+     *
      * @return void
      * @throws PseudoException
      */
