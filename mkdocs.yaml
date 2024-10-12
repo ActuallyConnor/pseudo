@@ -1,5 +1,8 @@
 site_name: pseudo/pseudo
 nav:
-  - Home: index.md
-  - Pseudo\Pdo: pdo.md
+  - Home: Home.md
+  - Pseudo\Pdo: classes/Pseudo/Pdo.md
+  - Pseudo\PdoStatement: classes/Pseudo/PdoStatement.md
+  - Pseudo\Result: classes/Pseudo/Result.md
+  - Pseudo\ParsedQuery: classes/Pseudo/ParsedQuery.md
 theme: readthedocs

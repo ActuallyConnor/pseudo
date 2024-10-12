@@ -27,6 +27,23 @@ Find the package on [packagist.org](https://packagist.org/packages/pseudo/pseudo
 
 https://pseudo-pdo.org
 
+### Documentation Generation
+
+This project uses [readthedocs](https://readthedocs.io) and [mkdocs](https://mkdocs.org)
+
+To load the local documentation page setup mkdocs locally and run:
+```shell
+$ mkdocs serve
+```
+
+You can edit the `mkdocs.yaml` file to change the pages that show up in the sidebar.
+
+To generate the docs, setup [phpDocumentor](https://phpdoc.org/) locally and then run:
+
+```shell
+$ phpdoc --directory=src --target=docs --template="vendor/saggre/phpdocumentor-markdown/themes/markdown"
+```
+
 ## Installation
 
 ```

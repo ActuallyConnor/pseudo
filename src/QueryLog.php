@@ -30,7 +30,7 @@ class QueryLog implements IteratorAggregate, ArrayAccess, Countable
         return new ArrayIterator($this->queries);
     }
 
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->queries[$offset]);
     }
