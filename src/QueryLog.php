@@ -35,7 +35,7 @@ class QueryLog implements IteratorAggregate, ArrayAccess, Countable
         return isset($this->queries[$offset]);
     }
 
-    public function offsetGet($offset): mixed
+    public function offsetGet(mixed $offset): ParsedQuery
     {
         if (!$this->offsetExists($offset)) {
             throw new InvalidArgumentException("Offset $offset does not exist");

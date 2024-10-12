@@ -28,14 +28,14 @@ class PdoStatement extends \PDOStatement
      */
     private QueryLog $queryLog;
 
-    private ?string $statement;
+    private string $statement;
 
     /**
      * @param mixed $result
      * @param QueryLog|null $queryLog
-     * @param string|null $statement
+     * @param string $statement
      */
-    public function __construct(mixed $result = null, QueryLog $queryLog = null, $statement = null)
+    public function __construct(mixed $result = null, QueryLog $queryLog = null, string $statement = '')
     {
         if (!($result instanceof Result)) {
             $result = new Result();
