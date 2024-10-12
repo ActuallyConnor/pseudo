@@ -23,13 +23,13 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param ParsedQuery|string $query
+     * @param string $query
      * @param array<int|string,mixed> $options
      * @return PdoStatement
      * @throws PseudoException
      * @throws Throwable
      */
-    public function prepare(ParsedQuery|string $query, array $options = []): PdoStatement
+    public function prepare(string $query, array $options = []): PdoStatement
     {
         $result = $this->mockedQueries->getResult($query);
 
@@ -105,21 +105,28 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @return string|false
-     * @throws PseudoException|Throwable
+     * @throws PseudoException
+     * @throws Throwable
      */
-    public function lastInsertId($name = null): string|false
+    public function lastInsertId(?string $name = null): string|false
     {
-        return $this->getLastResult() !== false ? $this->getLastResult()->getInsertId() : false;
+        $lastResult = $this->getLastResult();
+
+        if (is_bool($lastResult)) {
+            return false;
+        }
+
+        return (string) $lastResult->getInsertId();
     }
 
     /**
-     * @return Result|false
+     * @return Result|bool
      * @throws PseudoException|Throwable
      */
-    private function getLastResult(): Result|false
+    private function getLastResult(): Result|bool
     {
         try {
             $lastQuery = $this->queryLog[count($this->queryLog) - 1];
@@ -140,10 +147,17 @@ class Pdo extends \PDO
 
     /**
      * @param string $filePath
+     * @throws PseudoException
      */
     public function load(string $filePath): void
     {
-        $this->mockedQueries = unserialize(file_get_contents($filePath));
+        $fileContents = file_get_contents($filePath);
+
+        if ($fileContents === false) {
+            throw new PseudoException('Unable to read file: ' . $filePath);
+        }
+
+        $this->mockedQueries = unserialize($fileContents);
     }
 
     /**

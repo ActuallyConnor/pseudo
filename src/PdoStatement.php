@@ -12,10 +12,6 @@ use stdClass;
 
 class PdoStatement extends \PDOStatement
 {
-
-    /**
-     * @var Result;
-     */
     private Result $result;
     private int $fetchMode = \PDO::FETCH_BOTH; //DEFAULT FETCHMODE
     /**
@@ -52,8 +48,12 @@ class PdoStatement extends \PDOStatement
         $this->statement = $statement;
     }
 
-    public function setResult(Result $result): void
+    public function setResult(Result|bool $result): void
     {
+        if (is_bool($result)) {
+            return;
+        }
+
         $this->result = $result;
     }
 
@@ -203,14 +203,18 @@ class PdoStatement extends \PDOStatement
     }
 
     /**
-     * @param string $class
+     * @param class-string|null $class
      * @param array<int|string,mixed> $constructorArgs
      *
      * @return object|false
      * @throws ReflectionException
      */
-    public function fetchObject($class = stdClass::class, array $constructorArgs = []): object|false
+    public function fetchObject(?string $class = "stdClass", array $constructorArgs = []): object|false
     {
+        if (is_null($class)) {
+            return false;
+        }
+
         $row = $this->result->nextRow();
         if ($row) {
             $reflect = new ReflectionClass($class);
