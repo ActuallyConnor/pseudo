@@ -130,10 +130,12 @@ class PdoStatement extends \PDOStatement
     public function fetchColumn($column = 0): mixed
     {
         $row = $this->result->nextRow();
-        if ($row) {
+        if (is_array($row)) {
             $row = $this->processFetchedRow($row, \PDO::FETCH_NUM);
 
-            return $row[$column];
+            if (is_array($row)) {
+                return $row[$column];
+            }
         }
 
         return false;

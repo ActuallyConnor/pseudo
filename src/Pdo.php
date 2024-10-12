@@ -157,7 +157,10 @@ class Pdo extends \PDO
             throw new PseudoException('Unable to read file: ' . $filePath);
         }
 
-        $this->mockedQueries = unserialize($fileContents);
+        /** @var ResultCollection $resultCollection */
+        $resultCollection = unserialize($fileContents);
+
+        $this->mockedQueries = $resultCollection;
     }
 
     /**
