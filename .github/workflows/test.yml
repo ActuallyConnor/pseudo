@@ -22,9 +22,29 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          tools: phpunit
 
       - name: Run tests - phpunit
         run: |
           composer install
           ./vendor/bin/phpunit --configuration phpunit.xml.dist tests/Unit
+          
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php-versions: [ '8.0', '8.1', '8.2', '8.3' ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+
+      - name: Run tests - phpunit
+        run: |
+          composer install
+          ./vendor/bin/phpstan analyse --configuration phpstan.neon src
