@@ -1,4 +1,5 @@
 <?php
+
 namespace Pseudo;
 
 class ParsedQuery
@@ -15,7 +16,7 @@ class ParsedQuery
         $this->hash = sha1($query);
     }
 
-    public function isEqualTo($query)
+    public function isEqualTo(ParsedQuery|string $query): bool
     {
         if (!($query instanceof self)) {
             $query = new self($query);

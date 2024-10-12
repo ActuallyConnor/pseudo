@@ -8,6 +8,9 @@ use Throwable;
 
 class ResultCollection implements Countable
 {
+    /**
+     * @var array<string,mixed>
+     */
     private array $queries = [];
 
     public function count(): int
@@ -15,6 +18,12 @@ class ResultCollection implements Countable
         return count($this->queries);
     }
 
+    /**
+     * @param string $sql
+     * @param array<int|string,mixed>|null $params
+     * @param mixed|null $results
+     * @return void
+     */
     public function addQuery(string $sql, ?array $params = null, mixed $results = null): void
     {
         $query = new ParsedQuery($sql);
@@ -34,7 +43,7 @@ class ResultCollection implements Countable
         $this->queries[$query->getHash()] = $storedResults;
     }
 
-    public function exists($sql): bool
+    public function exists(string $sql): bool
     {
         $query = new ParsedQuery($sql);
         return isset($this->queries[$query->getHash()]);

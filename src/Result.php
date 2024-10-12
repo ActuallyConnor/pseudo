@@ -7,17 +7,28 @@ use Pseudo\Exceptions\PseudoException;
 
 class Result
 {
+    /**
+     * @var array<int|string,mixed>
+     */
     private array $rows = [];
-    private ?bool $executionResult = null;
+    private ?bool $executionResult;
     private bool $isParameterized = false;
     private string $errorCode;
     private string $errorInfo;
     private int $affectedRowCount = 0;
     private int $insertId = 0;
     private int $rowOffset = 0;
+    /**
+     * @var array<int|string,mixed>
+     */
     private array $params = [];
 
-    public function __construct($rows = null, $params = null, $executionResult = null)
+    /**
+     * @param array<int|string,mixed>|null $rows
+     * @param array<int|string,mixed>|null $params
+     * @param bool|null $executionResult
+     */
+    public function __construct(?array $rows = null, ?array $params = null, ?bool $executionResult = null)
     {
         if (is_array($rows)) {
             if ($params) {
@@ -32,9 +43,12 @@ class Result
     }
 
     /**
+     * @param array<int|string,mixed> $row
+     * @param array<int|string,mixed> $params
+     * @return void
      * @throws PseudoException
      */
-    public function addRow(array $row, $params = null): void
+    public function addRow(array $row, ?array $params = null): void
     {
         if (empty($row)) {
             return;
@@ -53,7 +67,12 @@ class Result
         }
     }
 
-    public function setParams($params, bool $parameterize = false): void
+    /**
+     * @param array<int|string,mixed> $params
+     * @param bool $parameterize
+     * @return void
+     */
+    public function setParams(array $params, bool $parameterize = false): void
     {
         $this->params = $params;
         if ($parameterize) {
@@ -61,7 +80,12 @@ class Result
         }
     }
 
-    public function getRows(array $params = [])
+    /**
+     * @param array<int|string,mixed> $params
+     * @return mixed
+     * @throws PseudoException
+     */
+    public function getRows(array $params = []): mixed
     {
         if (!empty($this->params) && empty($params)) {
             $params = $this->params;
@@ -88,9 +112,9 @@ class Result
     /**
      * Returns the next row if it exists, otherwise returns false
      *
-     * @param array $rows Rows to get row from
+     * @param array<int|string,mixed> $rows Rows to get row from
      *
-     * @return false|array Next row (false if doesn't exist)
+     * @return false|array<int|string,mixed> Next row (false if it doesn't exist)
      */
     private function getRowIfExists(array $rows): false|array
     {
@@ -104,7 +128,7 @@ class Result
     /**
      * Returns the next available row if it exists, otherwise returns false
      *
-     * @return false|array
+     * @return false|array<int|string,mixed>
      */
     public function nextRow(): false|array
     {
@@ -126,7 +150,7 @@ class Result
     }
 
 
-    public function setInsertId($insertId): void
+    public function setInsertId(int $insertId): void
     {
         $this->insertId = $insertId;
     }
@@ -137,11 +161,11 @@ class Result
     }
 
     /**
-     * @param $errorCode
+     * @param string $errorCode
      *
      * @throws PseudoException
      */
-    public function setErrorCode($errorCode): void
+    public function setErrorCode(string $errorCode): void
     {
         if (ctype_alnum($errorCode) && strlen($errorCode) == 5) {
             $this->errorCode = $errorCode;
@@ -159,9 +183,9 @@ class Result
     }
 
     /**
-     * @param $errorInfo
+     * @param string $errorInfo
      */
-    public function setErrorInfo($errorInfo): void
+    public function setErrorInfo(string $errorInfo): void
     {
         $this->errorInfo = $errorInfo;
     }
@@ -174,7 +198,7 @@ class Result
         return $this->errorInfo;
     }
 
-    public function setAffectedRowCount($affectedRowCount): void
+    public function setAffectedRowCount(int $affectedRowCount): void
     {
         $this->affectedRowCount = $affectedRowCount;
     }
@@ -184,6 +208,10 @@ class Result
         return $this->affectedRowCount;
     }
 
+    /**
+     * @param array<int|string,mixed> $arr
+     * @return bool
+     */
     public function isOrdinalArray(array $arr): bool
     {
         return !(is_string(key($arr)));
@@ -215,6 +243,10 @@ class Result
         return $this->executionResult;
     }
 
+    /**
+     * @param array<int|string,mixed> $params
+     * @return string
+     */
     private function stringifyParameterSet(array $params): string
     {
         if ($this->isOrdinalArray($params)) {
@@ -230,6 +262,11 @@ class Result
         }
     }
 
+    /**
+     * @param string $parameterKey
+     * @param array<int|string,mixed> $row
+     * @return void
+     */
     private function initializeParameterizedRows(string $parameterKey, array $row): void
     {
         if (empty($this->rows)) {
@@ -239,6 +276,8 @@ class Result
     }
 
     /**
+     * @param array<int|string,mixed> $row
+     * @return void
      * @throws PseudoException
      */
     private function addNonParameterizedRow(array $row): void

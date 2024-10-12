@@ -9,9 +9,16 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * @implements IteratorAggregate<int|string,ParsedQuery>
+ * @implements ArrayAccess<int|string,ParsedQuery>
+ */
 class QueryLog implements IteratorAggregate, ArrayAccess, Countable
 {
-    private $queries = [];
+    /**
+     * @var array<int|string,ParsedQuery>
+     */
+    private array $queries = [];
 
     public function count(): int
     {
@@ -47,11 +54,14 @@ class QueryLog implements IteratorAggregate, ArrayAccess, Countable
         unset($this->queries[$offset]);
     }
 
-    public function addQuery($sql): void
+    public function addQuery(string $sql): void
     {
         $this->queries[] = new ParsedQuery($sql);
     }
 
+    /**
+     * @return array<int|string,ParsedQuery>
+     */
     public function getQueries(): array
     {
         return $this->queries;

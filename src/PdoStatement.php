@@ -4,6 +4,7 @@ namespace Pseudo;
 
 use ArrayIterator;
 use Iterator;
+use Pseudo\Exceptions\LogicException;
 use Pseudo\Exceptions\PseudoException;
 use ReflectionClass;
 use ReflectionException;
@@ -16,8 +17,14 @@ class PdoStatement extends \PDOStatement
      * @var Result;
      */
     private Result $result;
-    private int $fetchMode = Pdo::FETCH_BOTH; //DEFAULT FETCHMODE
+    private int $fetchMode = \PDO::FETCH_BOTH; //DEFAULT FETCHMODE
+    /**
+     * @var array<int|string,mixed>
+     */
     private array $boundParams = [];
+    /**
+     * @var array<int|string,mixed>
+     */
     private array $boundColumns = [];
 
     /**
@@ -28,9 +35,9 @@ class PdoStatement extends \PDOStatement
     private ?string $statement;
 
     /**
-     * @param  mixed  $result
-     * @param  QueryLog|null  $queryLog
-     * @param  string|null  $statement
+     * @param mixed $result
+     * @param QueryLog|null $queryLog
+     * @param string|null $statement
      */
     public function __construct(mixed $result = null, QueryLog $queryLog = null, $statement = null)
     {
@@ -41,23 +48,24 @@ class PdoStatement extends \PDOStatement
         if (!($queryLog instanceof QueryLog)) {
             $queryLog = new QueryLog();
         }
-        $this->queryLog  = $queryLog;
+        $this->queryLog = $queryLog;
         $this->statement = $statement;
     }
 
-    public function setResult(Result $result) : void
+    public function setResult(Result $result): void
     {
         $this->result = $result;
     }
 
     /**
-     * @param  array|null  $params
+     * @param array<int|string,mixed>|null $params
      *
      * @return bool
+     * @throws LogicException
      */
-    public function execute(array $params = null) : bool
+    public function execute(array $params = null): bool
     {
-        $params = array_merge((array)$params, $this->boundParams);
+        $params = array_merge((array) $params, $this->boundParams);
         $this->result->setParams($params, !empty($this->boundParams));
         $this->queryLog->addQuery($this->statement);
 
@@ -68,7 +76,7 @@ class PdoStatement extends \PDOStatement
         // TODO: I'm not a fan of exception-based logic, but I want to avoid a backwards incompatibility change here.
         // Perhaps we can address in the next major version update
         try {
-            $success = (bool)$this->result->getRows($params ?: []);
+            $success = (bool) $this->result->getRows($params ?: []);
         } catch (PseudoException) {
             $success = false;
         }
@@ -77,7 +85,7 @@ class PdoStatement extends \PDOStatement
         return $success;
     }
 
-    public function fetch($mode = null, $cursorOrientation = Pdo::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed
+    public function fetch($mode = null, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0): mixed
     {
         // scrolling cursors not implemented
         $row = $this->result->nextRow();
@@ -91,39 +99,39 @@ class PdoStatement extends \PDOStatement
     public function bindParam(
         $param,
         &$var,
-        $type = Pdo::PARAM_STR,
+        $type = \PDO::PARAM_STR,
         $maxLength = null,
         $driverOptions = null
-    ) : bool {
+    ): bool {
         $this->boundParams[$param] =& $var;
 
         return true;
     }
 
-    public function bindColumn($column, &$var, $type = null, $maxLength = null, $driverOptions = null) : bool
+    public function bindColumn($column, &$var, $type = null, $maxLength = null, $driverOptions = null): bool
     {
         $this->boundColumns[$column] =& $var;
 
         return true;
     }
 
-    public function bindValue($param, $value, $type = Pdo::PARAM_STR) : bool
+    public function bindValue($param, $value, $type = \PDO::PARAM_STR): bool
     {
         $this->boundParams[$param] = $value;
 
         return true;
     }
 
-    public function rowCount() : int
+    public function rowCount(): int
     {
         return $this->result->getAffectedRowCount();
     }
 
-    public function fetchColumn($column = 0) : mixed
+    public function fetchColumn($column = 0): mixed
     {
         $row = $this->result->nextRow();
         if ($row) {
-            $row = $this->processFetchedRow($row, Pdo::FETCH_NUM);
+            $row = $this->processFetchedRow($row, \PDO::FETCH_NUM);
 
             return $row[$column];
         }
@@ -131,9 +139,15 @@ class PdoStatement extends \PDOStatement
         return false;
     }
 
-    public function fetchAll(int $mode = Pdo::FETCH_DEFAULT, mixed ...$args) : array
+    /**
+     * @param int $mode
+     * @param mixed ...$args
+     * @return array<int|string,mixed>
+     * @throws PseudoException
+     */
+    public function fetchAll(int $mode = \PDO::FETCH_DEFAULT, mixed ...$args): array
     {
-        $rows        = $this->result->getRows() ?? [];
+        $rows = $this->result->getRows() ?? [];
         $returnArray = [];
         foreach ($rows as $row) {
             $returnArray[] = $this->processFetchedRow($row, $mode);
@@ -142,27 +156,32 @@ class PdoStatement extends \PDOStatement
         return $returnArray;
     }
 
-    private function processFetchedRow($row, $fetchMode) : mixed
+    /**
+     * @param array<int|string,mixed> $row
+     * @param int|null $fetchMode
+     * @return mixed
+     */
+    private function processFetchedRow(array $row, ?int $fetchMode): mixed
     {
         $i = 0;
         switch ($fetchMode ?: $this->fetchMode) {
-            case Pdo::FETCH_BOTH:
+            case \PDO::FETCH_BOTH:
                 $returnRow = [];
-                $keys      = array_keys($row);
-                $c         = 0;
+                $keys = array_keys($row);
+                $c = 0;
                 foreach ($keys as $key) {
                     $returnRow[$key] = $row[$key];
                     $returnRow[$c++] = $row[$key];
                 }
 
                 return $returnRow;
-            case Pdo::FETCH_ASSOC:
+            case \PDO::FETCH_ASSOC:
                 return $row;
-            case Pdo::FETCH_NUM:
+            case \PDO::FETCH_NUM:
                 return array_values($row);
-            case Pdo::FETCH_OBJ:
-                return (object)$row;
-            case Pdo::FETCH_BOUND:
+            case \PDO::FETCH_OBJ:
+                return (object) $row;
+            case \PDO::FETCH_BOUND:
                 if ($this->result->isOrdinalArray($this->boundColumns)) {
                     foreach ($this->boundColumns as &$column) {
                         $column = array_values($row)[++$i];
@@ -174,7 +193,7 @@ class PdoStatement extends \PDOStatement
                 }
 
                 return true;
-            case Pdo::FETCH_COLUMN:
+            case \PDO::FETCH_COLUMN:
                 $returnRow = array_values($row);
 
                 return $returnRow[0];
@@ -184,18 +203,18 @@ class PdoStatement extends \PDOStatement
     }
 
     /**
-     * @param  string  $class
-     * @param  array  $constructorArgs
+     * @param string $class
+     * @param array<int|string,mixed> $constructorArgs
      *
      * @return object|false
      * @throws ReflectionException
      */
-    public function fetchObject($class = stdClass::class, array $constructorArgs = []) : object|false
+    public function fetchObject($class = stdClass::class, array $constructorArgs = []): object|false
     {
         $row = $this->result->nextRow();
         if ($row) {
             $reflect = new ReflectionClass($class);
-            $obj     = $reflect->newInstanceArgs($constructorArgs);
+            $obj = $reflect->newInstanceArgs($constructorArgs);
             foreach ($row as $key => $val) {
                 $obj->$key = $val;
             }
@@ -209,15 +228,15 @@ class PdoStatement extends \PDOStatement
     /**
      * @return string|null
      */
-    public function errorCode() : ?string
+    public function errorCode(): ?string
     {
         return $this->result->getErrorCode();
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
-    public function errorInfo() : array
+    public function errorInfo(): array
     {
         return [$this->result->getErrorInfo()];
     }
@@ -226,7 +245,7 @@ class PdoStatement extends \PDOStatement
      * @return int
      * @throws PseudoException
      */
-    public function columnCount() : int
+    public function columnCount(): int
     {
         $rows = $this->result->getRows();
         if ($rows) {
@@ -239,21 +258,21 @@ class PdoStatement extends \PDOStatement
     }
 
     /**
-     * @param  int  $mode
-     * @param  null  $className
-     * @param  mixed  ...$params
+     * @param int $mode
+     * @param null $className
+     * @param mixed ...$params
      *
      * @return bool|int
      */
-    public function setFetchMode($mode, $className = null, ...$params) : bool|int
+    public function setFetchMode($mode, $className = null, ...$params): bool|int
     {
-        $r                    = new ReflectionClass(new Pdo());
-        $constants            = $r->getConstants();
-        $constantNames        = array_keys($constants);
+        $r = new ReflectionClass(new Pdo());
+        $constants = $r->getConstants();
+        $constantNames = array_keys($constants);
         $allowedConstantNames = array_filter($constantNames, function ($val) {
             return str_starts_with($val, 'FETCH_');
         });
-        $allowedConstantVals  = [];
+        $allowedConstantVals = [];
         foreach ($allowedConstantNames as $name) {
             $allowedConstantVals[] = $constants[$name];
         }
@@ -267,12 +286,19 @@ class PdoStatement extends \PDOStatement
         return false;
     }
 
-    public function getBoundParams() : array
+    /**
+     * @return array<int|string,mixed>
+     */
+    public function getBoundParams(): array
     {
         return $this->boundParams;
     }
 
-    public function getIterator() : Iterator
+    /**
+     * @return Iterator
+     * @throws PseudoException
+     */
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->fetchAll());
     }
