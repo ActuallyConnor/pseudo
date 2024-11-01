@@ -74,7 +74,7 @@ class Pdo extends \PDO
         return $this->inTransaction;
     }
 
-    public function exec($statement): false|int
+    public function exec(string $statement): false|int
     {
         $result = $this->query($statement);
 
