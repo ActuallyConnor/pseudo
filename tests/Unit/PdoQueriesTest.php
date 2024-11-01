@@ -6,7 +6,6 @@ namespace Pseudo\UnitTest;
 
 use PHPUnit\Framework\TestCase;
 use Pseudo\Pdo;
-use Pseudo\Result;
 use Pseudo\UnitTest\SampleModels\PdoQueries;
 use RuntimeException;
 
@@ -39,6 +38,29 @@ class PdoQueriesTest extends TestCase
         );
 
         $data = $this->pdoQueries->selectQueryWithNoParameters();
+        $this->assertEquals(
+            [
+                'id' => 1,
+                'name' => 'John Doe',
+            ],
+            $data
+        );
+    }
+
+    public function testSelectSingleRow(): void
+    {
+        $this->pdo->mock(
+            'SELECT * FROM users ORDER BY id DESC LIMIT 1',
+            [],
+            [
+                [
+                    'id' => 1,
+                    'name' => 'John Doe',
+                ]
+            ]
+        );
+
+        $data = $this->pdoQueries->selectSingleRow();
         $this->assertEquals(
             [
                 'id' => 1,
