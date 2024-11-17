@@ -96,6 +96,24 @@ class PdoStatementTest extends TestCase
         $this->assertEquals([null], $fetchResult);
     }
 
+    public function testFetchAllNonArrayData(): void
+    {
+        $r = new Result(null);
+        $s = new PdoStatement();
+        $s->setResult($r);
+        $fetchResult = $s->fetchAll();
+        $this->assertEmpty($fetchResult);
+    }
+
+    public function testFetchAllSubArrayNotArray(): void
+    {
+        $r = new Result([]);
+        $s = new PdoStatement();
+        $s->setResult($r);
+        $fetchResult = $s->fetchAll();
+        $this->assertEmpty($fetchResult);
+    }
+
     public function testRowCount()
     {
         $s = new PdoStatement();
@@ -135,7 +153,7 @@ class PdoStatementTest extends TestCase
         $this->assertEquals(2, $p->columnCount());
     }
 
-    public function testColumnCountWhenZeo() : void
+    public function testColumnCountWhenZeo(): void
     {
         $statement = new PdoStatement();
 
@@ -242,6 +260,12 @@ class PdoStatementTest extends TestCase
         $this->assertFalse($statement->fetchObject());
     }
 
+    public function testNullFetchObject(): void
+    {
+        $statement = new PdoStatement();
+        $this->assertFalse($statement->fetchObject(null));
+    }
+
     public function testExecute()
     {
         $row1    = [
@@ -293,7 +317,7 @@ class PdoStatementTest extends TestCase
         $this->assertEquals(false, $s->fetchColumn(0));
     }
 
-    public function testGetIterator() : void
+    public function testGetIterator(): void
     {
         $rows                = [
             'id'  => 1,

@@ -176,6 +176,11 @@ class PdoClassTest extends TestCase
         $this->assertEquals(5, $p->exec($sql));
     }
 
+    /**
+     * This is technically an integration test and shouldn't be included here or in test coverage
+     * @return void
+     * @throws PseudoException
+     */
     public function testLoad()
     {
         $r = new ResultCollection();
@@ -189,6 +194,9 @@ class PdoClassTest extends TestCase
         $p->load('testload');
         $this->assertEquals($r, $p->getMockedQueries());
         unlink('testload');
+
+        $this->expectException(PseudoException::class);
+        $p->load('testload');
     }
 
     public function testSave()
