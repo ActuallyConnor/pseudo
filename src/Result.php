@@ -85,10 +85,10 @@ class Result
     /**
      * @param  array<int|string,mixed>  $params
      *
-     * @return mixed
+     * @return array<int|string,array<int|string,mixed>>|array<int|string,mixed>
      * @throws PseudoException
      */
-    public function getRows(array $params = []): mixed
+    public function getRows(array $params = []): array
     {
         if (!empty($this->params) && empty($params)) {
             $params = $this->params;

@@ -149,12 +149,16 @@ class PdoStatement extends \PDOStatement
      */
     public function fetchAll(int $mode = \PDO::FETCH_DEFAULT, mixed ...$args): array
     {
-        $rows = $this->result->getRows() ?? [];
+        $rows = $this->result->getRows();
 
-        if (is_array($rows)) {
+        if (!empty($rows)) {
             return array_map(
                 function ($row) use ($mode) {
-                    return $this->processFetchedRow($row, $mode);
+                    if (is_array($row)) {
+                        return $this->processFetchedRow($row, $mode);
+                    }
+
+                    return $row;
                 },
                 $rows
             );
@@ -260,10 +264,10 @@ class PdoStatement extends \PDOStatement
     public function columnCount(): int
     {
         $rows = $this->result->getRows();
-        if (is_array($rows)) {
+        if (!empty($rows)) {
             $row = array_shift($rows);
 
-            if (is_array($row)) {
+            if (is_array($row) && !empty($row)) {
                 return count(array_keys($row));
             }
         }

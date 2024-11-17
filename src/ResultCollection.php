@@ -29,6 +29,7 @@ class ResultCollection implements Countable
         $query = new ParsedQuery($sql);
 
         if (is_array($results)) {
+            /** @var array<int|string, array<int|string, mixed>> $results */
             $storedResults = new Result($results, $params);
         } elseif ($results instanceof Result) {
             $storedResults = $results;
