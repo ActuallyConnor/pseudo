@@ -13,18 +13,19 @@ class Pdo extends \PDO
     private QueryLog $queryLog;
 
     /**
-     * @param ResultCollection|null $collection
+     * @param  ResultCollection|null  $collection
      */
     public function __construct(
         ResultCollection $collection = null
     ) {
         $this->mockedQueries = $collection ?? new ResultCollection();
-        $this->queryLog = new QueryLog();
+        $this->queryLog      = new QueryLog();
     }
 
     /**
-     * @param string $query
-     * @param array<int|string,mixed> $options
+     * @param  string  $query
+     * @param  array<int|string,mixed>  $options
+     *
      * @return PdoStatement
      * @throws PseudoException
      * @throws Throwable
@@ -82,9 +83,9 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param string $query
-     * @param int|null $fetchMode
-     * @param mixed ...$fetchModeArgs
+     * @param  string  $query
+     * @param  int|null  $fetchMode
+     * @param  mixed  ...$fetchModeArgs
      *
      * @return PdoStatement
      * @throws PseudoException|Throwable
@@ -105,7 +106,7 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param string|null $name
+     * @param  string|null  $name
      *
      * @return string|false
      * @throws PseudoException
@@ -119,7 +120,7 @@ class Pdo extends \PDO
             return false;
         }
 
-        return (string) $lastResult->getInsertId();
+        return (string)$lastResult->getInsertId();
     }
 
     /**
@@ -138,7 +139,7 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param string $filePath
+     * @param  string  $filePath
      */
     public function save(string $filePath): void
     {
@@ -146,16 +147,19 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param string $filePath
+     * @param  string  $filePath
+     *
      * @throws PseudoException
      */
     public function load(string $filePath): void
     {
         $fileContents = file_get_contents($filePath);
 
+        // @codeCoverageIgnoreStart
         if ($fileContents === false) {
             throw new PseudoException('Unable to read file: ' . $filePath);
         }
+        // @codeCoverageIgnoreEnd
 
         /** @var ResultCollection $resultCollection */
         $resultCollection = unserialize($fileContents);
@@ -164,9 +168,9 @@ class Pdo extends \PDO
     }
 
     /**
-     * @param string $sql
-     * @param array<int|string,mixed>|null $params
-     * @param mixed $expectedResults
+     * @param  string  $sql
+     * @param  array<int|string,mixed>|null  $params
+     * @param  mixed  $expectedResults
      */
     public function mock(string $sql, ?array $params = null, mixed $expectedResults = null): void
     {

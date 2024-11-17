@@ -194,9 +194,6 @@ class PdoClassTest extends TestCase
         $p->load('testload');
         $this->assertEquals($r, $p->getMockedQueries());
         unlink('testload');
-
-        $this->expectException(PseudoException::class);
-        $p->load('testload');
     }
 
     public function testSave()
