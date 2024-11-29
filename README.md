@@ -127,7 +127,7 @@ should require no additional setup or bootstrapping to run.
 
 ## Requirements
 
-Pseudo internals currently target PHP 8.0 and above. It has no external dependencies aside from the PDO extension,
+Pseudo internals currently target PHP 8.1 and above. It has no external dependencies aside from the PDO extension,
 which seems rather obvious.
 
 Pseudo is built and tested with error reporting set to ```E_ALL & ~(E_NOTICE | E_DEPRECATED | E_STRICT)```. If you are
