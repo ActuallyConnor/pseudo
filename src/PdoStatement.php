@@ -34,7 +34,7 @@ class PdoStatement extends \PDOStatement
      * @param  QueryLog|null  $queryLog
      * @param  string  $statement
      */
-    public function __construct(mixed $result = null, QueryLog $queryLog = null, string $statement = '')
+    public function __construct(mixed $result = null, ?QueryLog $queryLog = null, string $statement = '')
     {
         if (!($result instanceof Result)) {
             $result = new Result();
@@ -62,7 +62,7 @@ class PdoStatement extends \PDOStatement
      * @return bool
      * @throws LogicException
      */
-    public function execute(array $params = null): bool
+    public function execute(?array $params = null): bool
     {
         $params = array_merge((array)$params, $this->boundParams);
         $this->result->setParams($params, !empty($this->boundParams));

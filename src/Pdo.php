@@ -12,12 +12,8 @@ class Pdo extends \PDO
     private bool $inTransaction = false;
     private QueryLog $queryLog;
 
-    /**
-     * @param  ResultCollection|null  $collection
-     */
-    public function __construct(
-        ResultCollection $collection = null
-    ) {
+    public function __construct(?ResultCollection $collection = null)
+    {
         $this->mockedQueries = $collection ?? new ResultCollection();
         $this->queryLog      = new QueryLog();
     }
