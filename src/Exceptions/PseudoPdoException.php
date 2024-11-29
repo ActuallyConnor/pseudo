@@ -1,7 +1,9 @@
 <?php
 namespace Pseudo\Exceptions;
 
-class PseudoPdoException extends \PDOException
+use PDOException;
+
+class PseudoPdoException extends PDOException
 {
 
 }

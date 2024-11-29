@@ -277,12 +277,11 @@ class PdoStatement extends \PDOStatement
 
     /**
      * @param  int  $mode
-     * @param  null  $className
-     * @param  mixed  ...$params
+     * @param  mixed  ...$args
      *
      * @return bool|int
      */
-    public function setFetchMode($mode, $className = null, ...$params): bool|int
+    public function setFetchMode($mode, ...$args): bool|int
     {
         $r                    = new ReflectionClass(new Pdo());
         $constants            = $r->getConstants();

@@ -34,7 +34,7 @@ class ResultTest extends TestCase
 
         $this->assertEquals($row1, $r->nextRow());
         $this->assertEquals($row2, $r->nextRow());
-        $this->assertEquals(false, $r->nextRow());
+        $this->assertFalse($r->nextRow());
     }
 
     public function testAddRow()

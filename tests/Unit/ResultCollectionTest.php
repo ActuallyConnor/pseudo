@@ -33,7 +33,7 @@ class ResultCollectionTest extends TestCase
         $results = new ResultCollection();
         $results->addQuery("SELECT * FROM ?", ['table'], [['test']]);
 
-        $this->assertEquals($results->count(), 1);
+        $this->assertEquals(1, $results->count());
     }
 
     public function testGetResultBool(): void

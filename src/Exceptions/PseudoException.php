@@ -1,7 +1,9 @@
 <?php
 namespace Pseudo\Exceptions;
 
-class PseudoException extends \Exception
+use Exception;
+
+class PseudoException extends Exception
 {
 
 }

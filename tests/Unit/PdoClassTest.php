@@ -30,20 +30,20 @@ class PdoClassTest extends TestCase
     public function testTransactionStates()
     {
         $p = new Pdo();
-        $this->assertEquals($p->inTransaction(), false);
+        $this->assertEquals(false, $p->inTransaction());
 
-        $this->assertEquals($p->beginTransaction(), true);
-        $this->assertEquals($p->inTransaction(), true);
+        $this->assertEquals(true, $p->beginTransaction());
+        $this->assertEquals(true, $p->inTransaction());
 
-        $this->assertEquals($p->commit(), true);
-        $this->assertEquals($p->inTransaction(), false);
-        $this->assertEquals($p->rollBack(), false);
+        $this->assertEquals(true, $p->commit());
+        $this->assertEquals(false, $p->inTransaction());
+        $this->assertEquals(false, $p->rollBack());
 
         $p->beginTransaction();
-        $this->assertEquals($p->beginTransaction(), false);
-        $this->assertEquals($p->inTransaction(), true);
-        $this->assertEquals($p->rollBack(), true);
-        $this->assertEquals($p->commit(), false);
+        $this->assertEquals(false, $p->beginTransaction());
+        $this->assertEquals(true, $p->inTransaction());
+        $this->assertEquals(true, $p->rollBack());
+        $this->assertEquals(false, $p->commit());
     }
 
     public function testMock()
@@ -79,7 +79,7 @@ class PdoClassTest extends TestCase
         $p->mock($sql3, $params3, $result1);
         $p->mock($sql3, $params4, $result2);
 
-        $this->assertEquals(3, count($p->getMockedQueries()));
+        $this->assertCount(3, $p->getMockedQueries());
     }
 
 
@@ -95,7 +95,7 @@ class PdoClassTest extends TestCase
         );
         $p->mock("SELECT * FROM test WHERE foo='bar'", null, $expectedRows);
         $result = $p->query("SELECT * FROM test WHERE foo='bar'");
-        $this->assertEquals($expectedRows->getRows(), $result->fetchAll(PDO::FETCH_ASSOC));
+        $this->assertEquals($expectedRows->getRows(), $result->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function testMockQueryDoesNotExist() : void

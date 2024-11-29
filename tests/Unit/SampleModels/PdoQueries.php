@@ -10,7 +10,7 @@ use RuntimeException;
 class PdoQueries
 {
 
-    public function __construct(private PDO $pdo)
+    public function __construct(private readonly PDO $pdo)
     {
     }
 
@@ -35,7 +35,7 @@ class PdoQueries
         $stmt = $this->pdo->query("SELECT * FROM users");
 
         return array_map(
-            fn ($row) => $row['name'],
+            fn($row) => $row['name'],
             $stmt->fetch(PDO::FETCH_ASSOC)
         );
     }
@@ -46,7 +46,7 @@ class PdoQueries
 
         // and somewhere later:
         return array_map(
-            fn ($row) => $row['name'],
+            fn($row) => $row['name'],
             $data
         );
     }
@@ -84,7 +84,7 @@ class PdoQueries
         $stmt->execute([10, 3]);
 
         return array_map(
-            fn ($row) => $row['name'],
+            fn($row) => $row['name'],
             $stmt->fetch(PDO::FETCH_ASSOC)
         );
     }
@@ -95,13 +95,14 @@ class PdoQueries
         $stmt->execute([10, 3]);
 
         return array_map(
-            fn ($row) => $row['name'],
+            fn($row) => $row['name'],
             $stmt->fetchAll()
         );
     }
 
     /**
-     * @param array<int> $ids
+     * @param  array<int>  $ids
+     *
      * @return array
      */
     public function findAllByIds(array $ids): array
@@ -112,9 +113,7 @@ class PdoQueries
         }
 
         $select = $this->pdo->prepare(
-            sprintf(
-                'SELECT * FROM users WHERE id IN (:userIds) ORDER BY created_at DESC',
-            )
+            'SELECT * FROM users WHERE id IN (:userIds) ORDER BY created_at DESC',
         );
 
         $userIds = implode(',', $ids);
@@ -125,7 +124,7 @@ class PdoQueries
         $rows = $select->fetchAll();
 
         return array_map(
-            fn ($row) => self::parse($row),
+            fn($row) => self::parse($row),
             $rows
         );
     }
@@ -145,7 +144,7 @@ class PdoQueries
     private static function parse(array $row): array
     {
         return [
-            'id' => (int) $row['id'],
+            'id'   => (int)$row['id'],
             'name' => $row['name'],
         ];
     }
