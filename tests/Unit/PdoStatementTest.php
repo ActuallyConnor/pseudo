@@ -5,6 +5,7 @@ namespace Pseudo\UnitTest;
 use Iterator;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Pseudo\Exceptions\PseudoException;
 use Pseudo\PdoStatement;
 use Pseudo\QueryLog;
 use Pseudo\Result;
@@ -165,8 +166,9 @@ class PdoStatementTest extends TestCase
         $p       = new PdoStatement();
         $success = $p->setFetchMode(PDO::FETCH_ASSOC);
         $this->assertEquals(1, $success);
-        $success = $p->setFetchMode(456);
-        $this->assertFalse($success);
+
+        $this->expectException(PseudoException::class);
+        $p->setFetchMode(456);
     }
 
     public function testFetch()

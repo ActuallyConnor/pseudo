@@ -279,9 +279,10 @@ class PdoStatement extends \PDOStatement
      * @param  int  $mode
      * @param  mixed  ...$args
      *
-     * @return bool|int
+     * @return true
+     * @throws PseudoException
      */
-    public function setFetchMode($mode, ...$args): bool|int
+    public function setFetchMode($mode, ...$args): bool
     {
         $r                    = new ReflectionClass(new Pdo());
         $constants            = $r->getConstants();
@@ -297,10 +298,10 @@ class PdoStatement extends \PDOStatement
         if (in_array($mode, $allowedConstantVals)) {
             $this->fetchMode = $mode;
 
-            return 1;
+            return true;
         }
 
-        return false;
+        throw new PseudoException("Invalid fetch mode");
     }
 
     /**
