@@ -30,20 +30,20 @@ class PdoClassTest extends TestCase
     public function testTransactionStates()
     {
         $p = new Pdo();
-        $this->assertEquals(false, $p->inTransaction());
+        $this->assertFalse($p->inTransaction());
 
-        $this->assertEquals(true, $p->beginTransaction());
-        $this->assertEquals(true, $p->inTransaction());
+        $this->assertTrue($p->beginTransaction());
+        $this->assertTrue($p->inTransaction());
 
-        $this->assertEquals(true, $p->commit());
-        $this->assertEquals(false, $p->inTransaction());
-        $this->assertEquals(false, $p->rollBack());
+        $this->assertTrue($p->commit());
+        $this->assertFalse($p->inTransaction());
+        $this->assertFalse($p->rollBack());
 
         $p->beginTransaction();
-        $this->assertEquals(false, $p->beginTransaction());
-        $this->assertEquals(true, $p->inTransaction());
-        $this->assertEquals(true, $p->rollBack());
-        $this->assertEquals(false, $p->commit());
+        $this->assertFalse($p->beginTransaction());
+        $this->assertTrue($p->inTransaction());
+        $this->assertTrue($p->rollBack());
+        $this->assertFalse($p->commit());
     }
 
     public function testMock()
@@ -200,7 +200,6 @@ class PdoClassTest extends TestCase
     {
         $r = new ResultCollection();
         $r->addQuery("SELECT 1", null, [[1]]);
-        $serialized = serialize($r);
         if (file_exists('testsave')) {
             unlink('testsave');
         }

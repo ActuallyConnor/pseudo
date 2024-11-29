@@ -97,7 +97,6 @@ class ResultTest extends TestCase
 
     public function testSetAffectedRowCount(): void
     {
-        $query = "SELECT * FROM test";
         $rows = [['id' => 1], ['id' => 2], ['id' => 3]];
         $result = new Result($rows);
         $result->setAffectedRowCount(count($rows));

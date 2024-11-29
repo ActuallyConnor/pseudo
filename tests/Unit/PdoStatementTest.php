@@ -3,6 +3,7 @@
 namespace Pseudo\UnitTest;
 
 use Iterator;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Pseudo\PdoStatement;
 use Pseudo\QueryLog;
@@ -40,7 +41,7 @@ class PdoStatementTest extends TestCase
         $r    = new Result([$rows]);
         $s    = new PdoStatement();
         $s->setResult($r);
-        $fetchResult = $s->fetchAll(\PDO::FETCH_ASSOC);
+        $fetchResult = $s->fetchAll(PDO::FETCH_ASSOC);
         $this->assertEquals([$rows], $fetchResult);
     }
 
@@ -59,7 +60,7 @@ class PdoStatementTest extends TestCase
         $r                   = new Result([$rows]);
         $s                   = new PdoStatement();
         $s->setResult($r);
-        $fetchResult = $s->fetchAll(\PDO::FETCH_NUM);
+        $fetchResult = $s->fetchAll(PDO::FETCH_NUM);
         $this->assertEquals($expectedFetchResult, $fetchResult);
     }
 
@@ -78,7 +79,7 @@ class PdoStatementTest extends TestCase
         $r                   = new Result([$rows]);
         $s                   = new PdoStatement();
         $s->setResult($r);
-        $fetchResult = $s->fetchAll(\PDO::FETCH_OBJ);
+        $fetchResult = $s->fetchAll(PDO::FETCH_OBJ);
         $this->assertEquals($expectedFetchResult, $fetchResult);
     }
 
@@ -162,7 +163,7 @@ class PdoStatementTest extends TestCase
     public function testSetFetchMode()
     {
         $p       = new PdoStatement();
-        $success = $p->setFetchMode(\PDO::FETCH_ASSOC);
+        $success = $p->setFetchMode(PDO::FETCH_ASSOC);
         $this->assertEquals(1, $success);
         $success = $p->setFetchMode(456);
         $this->assertFalse($success);
@@ -188,7 +189,7 @@ class PdoStatementTest extends TestCase
         $r->addRow($row1);
         $r->addRow($row2);
 
-        $p->setFetchMode(\PDO::FETCH_ASSOC);
+        $p->setFetchMode(PDO::FETCH_ASSOC);
         $this->assertEquals($row1, $p->fetch());
         $this->assertEquals($row2, $p->fetch());
     }
@@ -213,7 +214,7 @@ class PdoStatementTest extends TestCase
         $r->addRow($row1);
         $r->addRow($row2);
 
-        $p->setFetchMode(\PDO::FETCH_COLUMN);
+        $p->setFetchMode(PDO::FETCH_COLUMN);
         $this->assertEquals($col1, $p->fetch());
         $this->assertEquals($col2, $p->fetch());
     }
@@ -228,14 +229,14 @@ class PdoStatementTest extends TestCase
         $r->addRow($row1);
         $p = new PdoStatement($r);
         $p->bindColumn(2, $test);
-        $p->fetch(\PDO::FETCH_BOUND);
+        $p->fetch(PDO::FETCH_BOUND);
         $this->assertEquals('bar', $test);
         unset($test);
 
         $r->reset();
         $p = new PdoStatement($r);
         $p->bindColumn('foo', $test);
-        $p->fetch(\PDO::FETCH_BOUND);
+        $p->fetch(PDO::FETCH_BOUND);
         $this->assertEquals('bar', $test);
     }
 
