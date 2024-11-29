@@ -34,7 +34,7 @@ class PdoStatement extends \PDOStatement
      * @param  QueryLog|null  $queryLog
      * @param  string  $statement
      */
-    public function __construct(mixed $result = null, QueryLog $queryLog = null, string $statement = '')
+    public function __construct(mixed $result = null, ?QueryLog $queryLog = null, string $statement = '')
     {
         if (!($result instanceof Result)) {
             $result = new Result();
@@ -62,7 +62,7 @@ class PdoStatement extends \PDOStatement
      * @return bool
      * @throws LogicException
      */
-    public function execute(array $params = null): bool
+    public function execute(?array $params = null): bool
     {
         $params = array_merge((array)$params, $this->boundParams);
         $this->result->setParams($params, !empty($this->boundParams));
@@ -277,12 +277,12 @@ class PdoStatement extends \PDOStatement
 
     /**
      * @param  int  $mode
-     * @param  null  $className
-     * @param  mixed  ...$params
+     * @param  mixed  ...$args
      *
-     * @return bool|int
+     * @return true
+     * @throws PseudoException
      */
-    public function setFetchMode($mode, $className = null, ...$params): bool|int
+    public function setFetchMode($mode, ...$args): bool
     {
         $r                    = new ReflectionClass(new Pdo());
         $constants            = $r->getConstants();
@@ -298,10 +298,10 @@ class PdoStatement extends \PDOStatement
         if (in_array($mode, $allowedConstantVals)) {
             $this->fetchMode = $mode;
 
-            return 1;
+            return true;
         }
 
-        return false;
+        throw new PseudoException("Invalid fetch mode");
     }
 
     /**

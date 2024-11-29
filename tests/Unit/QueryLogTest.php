@@ -29,7 +29,7 @@ class QueryLogTest extends TestCase
         $queryLog = new QueryLog();
         $queryLog->addQuery($sql);
         $queries = $queryLog->getQueries();
-        $this->assertEquals(1, count($queries));
+        $this->assertCount(1, $queries);
         $this->assertTrue($queries[0]->isEqualTo($sql));
     }
 

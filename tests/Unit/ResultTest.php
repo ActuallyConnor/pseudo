@@ -34,7 +34,7 @@ class ResultTest extends TestCase
 
         $this->assertEquals($row1, $r->nextRow());
         $this->assertEquals($row2, $r->nextRow());
-        $this->assertEquals(false, $r->nextRow());
+        $this->assertFalse($r->nextRow());
     }
 
     public function testAddRow()
@@ -97,7 +97,6 @@ class ResultTest extends TestCase
 
     public function testSetAffectedRowCount(): void
     {
-        $query = "SELECT * FROM test";
         $rows = [['id' => 1], ['id' => 2], ['id' => 3]];
         $result = new Result($rows);
         $result->setAffectedRowCount(count($rows));

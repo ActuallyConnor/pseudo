@@ -104,8 +104,8 @@ class ObjectsModelTest extends \PHPUnit\Framework\TestCase {
 
 ### Supported features
 
-The internal storage of mocks and results are associatve arrays. Pseudo attempts to implement as much of the standard
-PDO feature set as possible, so varies different fetch modes, bindings, parameterized queries, etc all work as you'd
+The internal storage of mocks and results are associative arrays. Pseudo attempts to implement as much of the standard
+PDO feature set as possible, so varies different fetch modes, bindings, parameterized queries, etc. all work as you'd
 expect them to.
 
 ### Not implemented / wish-list items
@@ -127,7 +127,7 @@ should require no additional setup or bootstrapping to run.
 
 ## Requirements
 
-Pseudo internals currently target PHP 8.0 and above. It has no external dependencies aside from the PDO extension,
+Pseudo internals currently target PHP 8.1 and above. It has no external dependencies aside from the PDO extension,
 which seems rather obvious.
 
 Pseudo is built and tested with error reporting set to ```E_ALL & ~(E_NOTICE | E_DEPRECATED | E_STRICT)```. If you are

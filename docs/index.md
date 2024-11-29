@@ -105,8 +105,8 @@ class ObjectsModelTest extends \PHPUnit\Framework\TestCase {
 
 ### Supported features
 
-The internal storage of mocks and results are associatve arrays. Pseudo attempts to implement as much of the standard
-PDO feature set as possible, so varies different fetch modes, bindings, parameterized queries, etc all work as you'd
+The internal storage of mocks and results are associatove arrays. Pseudo attempts to implement as much of the standard
+PDO feature set as possible, so varies different fetch modes, bindings, parameterized queries, etc. all work as you'd
 expect them to.
 
 ### Not implemented / wish-list items

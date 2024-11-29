@@ -30,20 +30,20 @@ class PdoClassTest extends TestCase
     public function testTransactionStates()
     {
         $p = new Pdo();
-        $this->assertEquals($p->inTransaction(), false);
+        $this->assertFalse($p->inTransaction());
 
-        $this->assertEquals($p->beginTransaction(), true);
-        $this->assertEquals($p->inTransaction(), true);
+        $this->assertTrue($p->beginTransaction());
+        $this->assertTrue($p->inTransaction());
 
-        $this->assertEquals($p->commit(), true);
-        $this->assertEquals($p->inTransaction(), false);
-        $this->assertEquals($p->rollBack(), false);
+        $this->assertTrue($p->commit());
+        $this->assertFalse($p->inTransaction());
+        $this->assertFalse($p->rollBack());
 
         $p->beginTransaction();
-        $this->assertEquals($p->beginTransaction(), false);
-        $this->assertEquals($p->inTransaction(), true);
-        $this->assertEquals($p->rollBack(), true);
-        $this->assertEquals($p->commit(), false);
+        $this->assertFalse($p->beginTransaction());
+        $this->assertTrue($p->inTransaction());
+        $this->assertTrue($p->rollBack());
+        $this->assertFalse($p->commit());
     }
 
     public function testMock()
@@ -79,7 +79,7 @@ class PdoClassTest extends TestCase
         $p->mock($sql3, $params3, $result1);
         $p->mock($sql3, $params4, $result2);
 
-        $this->assertEquals(3, count($p->getMockedQueries()));
+        $this->assertCount(3, $p->getMockedQueries());
     }
 
 
@@ -95,7 +95,7 @@ class PdoClassTest extends TestCase
         );
         $p->mock("SELECT * FROM test WHERE foo='bar'", null, $expectedRows);
         $result = $p->query("SELECT * FROM test WHERE foo='bar'");
-        $this->assertEquals($expectedRows->getRows(), $result->fetchAll(PDO::FETCH_ASSOC));
+        $this->assertEquals($expectedRows->getRows(), $result->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public function testMockQueryDoesNotExist() : void
@@ -200,7 +200,6 @@ class PdoClassTest extends TestCase
     {
         $r = new ResultCollection();
         $r->addQuery("SELECT 1", null, [[1]]);
-        $serialized = serialize($r);
         if (file_exists('testsave')) {
             unlink('testsave');
         }
