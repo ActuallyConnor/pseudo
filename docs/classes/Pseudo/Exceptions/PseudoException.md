@@ -7,7 +7,7 @@
 
 
 * Full name: `\Pseudo\Exceptions\PseudoException`
-* Parent class: [`Exception`](https://www.php.net/manual/en/class.exception.php)
+* Parent class: [`Exception`](../../Exception.md)
 
 
 
@@ -15,4 +15,4 @@
 
 
 ***
-> Automatically generated on 2024-10-12
+> Automatically generated on 2025-05-14

@@ -8,7 +8,7 @@
 
 * Full name: `\Pseudo\ResultCollection`
 * This class implements:
-[`\Countable`](https://www.php.net/manual/en/class.countable.php)
+[`\Countable`](../Countable.md)
 
 
 
@@ -138,7 +138,7 @@ public getResult(string|\Pseudo\ParsedQuery $query): \Pseudo\Result|bool
 
 - [`PseudoException`](./Exceptions/PseudoException.md)
 
-- [`Throwable`](https://www.php.net/manual/en/class.throwable.php)
+- [`Throwable`](../Throwable.md)
 
 
 
@@ -146,4 +146,4 @@ public getResult(string|\Pseudo\ParsedQuery $query): \Pseudo\Result|bool
 
 
 ***
-> Automatically generated on 2024-10-12
+> Automatically generated on 2025-05-14

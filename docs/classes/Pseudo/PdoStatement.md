@@ -451,7 +451,7 @@ public fetchObject(class-string|null $class = &quot;stdClass&quot;, array&lt;int
 
 **Throws:**
 
-- [`ReflectionException`](https://www.php.net/manual/en/class.reflectionexception.php)
+- [`ReflectionException`](../ReflectionException.md)
 
 
 
@@ -530,7 +530,7 @@ public columnCount(): int
 
 
 ```php
-public setFetchMode(int $mode, null $className = null, mixed $params): bool|int
+public setFetchMode(int $mode, mixed $args): true
 ```
 
 
@@ -545,10 +545,14 @@ public setFetchMode(int $mode, null $className = null, mixed $params): bool|int
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `$mode` | **int** |  |
-| `$className` | **null** |  |
-| `$params` | **mixed** |  |
+| `$args` | **mixed** |  |
 
 
+
+
+**Throws:**
+
+- [`PseudoException`](./Exceptions/PseudoException.md)
 
 
 
@@ -603,4 +607,4 @@ public getIterator(): \Iterator
 
 
 ***
-> Automatically generated on 2024-10-12
+> Automatically generated on 2025-05-14

@@ -7,7 +7,7 @@
 
 
 * Full name: `\Pseudo\Exceptions\PseudoPdoException`
-* Parent class: [`PDOException`](https://www.php.net/manual/en/class.pdoexception.php)
+* Parent class: [`PDOException`](../../PDOException.md)
 
 
 
@@ -15,4 +15,4 @@
 
 
 ***
-> Automatically generated on 2024-10-12
+> Automatically generated on 2025-05-14

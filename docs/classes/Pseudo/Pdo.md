@@ -7,7 +7,7 @@
 
 
 * Full name: `\Pseudo\Pdo`
-* Parent class: [`PDO`](https://www.php.net/manual/en/class.pdo.php)
+* Parent class: [`PDO`](../PDO.md)
 
 
 
@@ -67,7 +67,7 @@ private \Pseudo\QueryLog $queryLog
 
 
 ```php
-public __construct(\Pseudo\ResultCollection|null $collection = null): mixed
+public __construct(?\Pseudo\ResultCollection $collection = null): mixed
 ```
 
 
@@ -81,7 +81,7 @@ public __construct(\Pseudo\ResultCollection|null $collection = null): mixed
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$collection` | **\Pseudo\ResultCollection&#124;null** |  |
+| `$collection` | **?\Pseudo\ResultCollection** |  |
 
 
 
@@ -118,7 +118,7 @@ public prepare(string $query, array&lt;int|string,mixed&gt; $options = []): \Pse
 
 - [`PseudoException`](./Exceptions/PseudoException.md)
 
-- [`Throwable`](https://www.php.net/manual/en/class.throwable.php)
+- [`Throwable`](../Throwable.md)
 
 
 
@@ -213,7 +213,7 @@ public inTransaction(): bool
 
 
 ```php
-public exec(mixed $statement): false|int
+public exec(string $statement): false|int
 ```
 
 
@@ -227,7 +227,7 @@ public exec(mixed $statement): false|int
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$statement` | **mixed** |  |
+| `$statement` | **string** |  |
 
 
 
@@ -263,8 +263,7 @@ public query(string $query, int|null $fetchMode = null, mixed $fetchModeArgs): \
 
 **Throws:**
 
-- [`\Pseudo\Exceptions\PseudoException|`](Exceptions/PseudoException.md)
-- [\Throwable](https://www.php.net/manual/en/class.throwable.php)
+- [`\Pseudo\Exceptions\PseudoException|\Throwable`](./Exceptions/PseudoException|/Throwable.md)
 
 
 
@@ -296,8 +295,9 @@ public lastInsertId(string|null $name = null): string|false
 
 **Throws:**
 
-- [`PseudoException`](Exceptions/PseudoException.md)
-- [`\Throwable`](https://www.php.net/manual/en/class.throwable.php)
+- [`PseudoException`](./Exceptions/PseudoException.md)
+
+- [`Throwable`](../Throwable.md)
 
 
 
@@ -323,8 +323,7 @@ private getLastResult(): \Pseudo\Result|bool
 
 **Throws:**
 
-- [`\Pseudo\Exceptions\PseudoException|`](Exceptions/PseudoException.md)
-- [\Throwable](https://www.php.net/manual/en/class.throwable.php)
+- [`\Pseudo\Exceptions\PseudoException|\Throwable`](./Exceptions/PseudoException|/Throwable.md)
 
 
 
@@ -441,4 +440,4 @@ public getMockedQueries(): \Pseudo\ResultCollection
 
 
 ***
-> Automatically generated on 2024-10-12
+> Automatically generated on 2025-05-14

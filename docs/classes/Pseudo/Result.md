@@ -246,7 +246,7 @@ public setParams(array&lt;int|string,mixed&gt; $params, bool $parameterize = fal
 
 
 ```php
-public getRows(array&lt;int|string,mixed&gt; $params = []): mixed
+public getRows(array&lt;int|string,mixed&gt; $params = []): array&lt;int|string,array&lt;int|string,mixed&gt;&gt;|array&lt;int|string,mixed&gt;
 ```
 
 
@@ -706,4 +706,4 @@ private addNonParameterizedRow(array&lt;int|string,mixed&gt; $row): void
 
 
 ***
-> Automatically generated on 2024-10-12
+> Automatically generated on 2025-05-14
