@@ -114,8 +114,6 @@ expect them to.
   effect
 * Anything related to scrolling cursors has not been implemented, and this includes the fetch modes that might require
   them
-* Pseudo can load and save serialized copies of it's mocked data, but in the future, it will be able to "record" a live
-  PDO connection to a real database and then use that data to create mocks from your actual data
 * Pseudo isn't strict-mode compatible, which means tests might fail due to unexpected errors with signatures and
   offsets, etc. (I'd happily accept a pull request to fix this!)
 
