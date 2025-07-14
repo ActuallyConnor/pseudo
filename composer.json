@@ -26,7 +26,7 @@
         "phpunit/phpunit": "^10.5|^11.3|^12.2",
         "phpunit/php-code-coverage": "^10.1|^11.0|^12.3",
         "phpstan/phpstan": "^2.0",
-        "saggre/phpdocumentor-markdown": "^0.1.4"
+        "saggre/phpdocumentor-markdown": "^0.1.4 || ^1.0.0"
     },
     "autoload": {
         "psr-4": {
