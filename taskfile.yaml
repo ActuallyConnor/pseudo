@@ -1,0 +1,10 @@
+version: '3'
+
+tasks:
+  stan:
+    cmds:
+      - ./vendor/bin/phpstan analyse --configuration phpstan.neon src
+
+  test:
+    cmds:
+      - ./vendor/bin/phpunit
