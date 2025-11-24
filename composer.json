@@ -23,7 +23,7 @@
     },
     "require-dev": {
         "phpdocumentor/shim": "^3.7",
-        "phpunit/phpunit": "^11.3|^12.2|13.0.x-dev",
+        "phpunit/phpunit": "^11.3|^12.2",
         "phpunit/php-code-coverage": "^11.0|^12.3",
         "phpstan/phpstan": "^2.0",
         "saggre/phpdocumentor-markdown": "^0.1.4 || ^1.0.0"
