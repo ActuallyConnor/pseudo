@@ -105,7 +105,7 @@ class Result
 
             throw new PseudoException("Cannot get rows with parameters on a non-parameterized result");
         } else {
-            if (!$this->isParameterized && isset($this->rows)) {
+            if (!$this->isParameterized) {
                 return $this->rows;
             }
             throw new PseudoException("Cannot get rows without parameters on a parameterized result");
@@ -258,12 +258,12 @@ class Result
     private function stringifyParameterSet(array $params): string
     {
         if ($this->isOrdinalArray($params)) {
-            return implode(',', $params);
+            return implode(',', array_map(static fn (mixed $v): string => is_scalar($v) || $v === null ? (string) $v : serialize($v), $params));
         } else {
             $returnArray = [];
             foreach ($params as $key => $value) {
-                $returnArray[] = $key;
-                $returnArray[] = $value;
+                $returnArray[] = (string) $key;
+                $returnArray[] = is_scalar($value) || $value === null ? (string) $value : serialize($value);
             }
 
             return implode(',', $returnArray);

@@ -96,7 +96,7 @@ class PdoStatement extends \PDOStatement
     }
 
     public function bindParam(
-        $param,
+        int|string $param,
         &$var,
         $type = \PDO::PARAM_STR,
         $maxLength = null,
@@ -107,14 +107,14 @@ class PdoStatement extends \PDOStatement
         return true;
     }
 
-    public function bindColumn($column, &$var, $type = null, $maxLength = null, $driverOptions = null): bool
+    public function bindColumn(int|string $column, &$var, $type = null, $maxLength = null, $driverOptions = null): bool
     {
         $this->boundColumns[$column] =& $var;
 
         return true;
     }
 
-    public function bindValue($param, $value, $type = \PDO::PARAM_STR): bool
+    public function bindValue(int|string $param, $value, $type = \PDO::PARAM_STR): bool
     {
         $this->boundParams[$param] = $value;
 
