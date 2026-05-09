@@ -284,4 +284,14 @@ class PdoQueriesTest extends TestCase
             $data
         );
     }
+
+    public function testTransferBalanceCommits(): void
+    {
+        $this->pdo->mock('UPDATE accounts SET balance = balance - ? WHERE id = ?', [100, 1], true);
+        $this->pdo->mock('UPDATE accounts SET balance = balance + ? WHERE id = ?', [100, 2], true);
+
+        $result = $this->pdoQueries->transferBalance(1, 2, 100);
+        $this->assertTrue($result);
+        $this->assertFalse($this->pdo->inTransaction());
+    }
 }

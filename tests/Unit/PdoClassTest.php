@@ -221,4 +221,59 @@ class PdoClassTest extends TestCase
         }
         $this->assertMatchesRegularExpression('/SELECT 123/', $message);
     }
+
+    public function testTransactionQueriesNotLoggedUntilCommit(): void
+    {
+        $sql = "INSERT INTO users (name) VALUES ('John')";
+        $p   = new Pdo();
+        $p->mock($sql, null, true);
+
+        $p->beginTransaction();
+        $p->query($sql);
+
+        // Query should not appear in the log while inside the transaction
+        $this->assertCount(0, $p->getQueryLog());
+
+        $p->commit();
+
+        // After commit the buffered query is flushed to the log
+        $this->assertCount(1, $p->getQueryLog());
+    }
+
+    public function testTransactionRollbackDiscardsQueries(): void
+    {
+        $sql = "DELETE FROM users WHERE id = 1";
+        $p   = new Pdo();
+        $p->mock($sql, null, true);
+
+        $p->beginTransaction();
+        $stmt = $p->prepare($sql);
+        $stmt->execute();
+
+        $p->rollBack();
+
+        // After rollback the query log must remain empty
+        $this->assertCount(0, $p->getQueryLog());
+    }
+
+    public function testLastInsertIdDuringTransaction(): void
+    {
+        $sql = "INSERT INTO users (name) VALUES ('Jane')";
+        $r   = new Result();
+        $r->setInsertId(99);
+        $p   = new Pdo();
+        $p->mock($sql, null, $r);
+
+        $p->beginTransaction();
+        $stmt = $p->prepare($sql);
+        $stmt->execute();
+
+        // lastInsertId() should resolve from the transaction buffer
+        $this->assertEquals(99, $p->lastInsertId());
+
+        $p->commit();
+
+        // Should still be accessible after commit via the query log
+        $this->assertEquals(99, $p->lastInsertId());
+    }
 }

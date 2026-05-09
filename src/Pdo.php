@@ -11,6 +11,8 @@ class Pdo extends \PDO
     private ResultCollection $mockedQueries;
     private bool $inTransaction = false;
     private QueryLog $queryLog;
+    /** @var array<int, string> */
+    private array $transactionBuffer = [];
 
     public function __construct(?ResultCollection $collection = null)
     {
@@ -30,7 +32,7 @@ class Pdo extends \PDO
     {
         $result = $this->mockedQueries->getResult($query);
 
-        return new PdoStatement($result, $this->queryLog, $query);
+        return new PdoStatement($result, $this->queryLog, $query, $this);
     }
 
     public function beginTransaction(): bool
@@ -47,6 +49,10 @@ class Pdo extends \PDO
     public function commit(): bool
     {
         if ($this->inTransaction()) {
+            foreach ($this->transactionBuffer as $query) {
+                $this->queryLog->addQuery($query);
+            }
+            $this->transactionBuffer = [];
             $this->inTransaction = false;
 
             return true;
@@ -58,6 +64,7 @@ class Pdo extends \PDO
     public function rollBack(): bool
     {
         if ($this->inTransaction()) {
+            $this->transactionBuffer = [];
             $this->inTransaction = false;
 
             return true;
@@ -91,7 +98,12 @@ class Pdo extends \PDO
         if ($this->mockedQueries->exists($query)) {
             $result = $this->mockedQueries->getResult($query);
 
-            $this->queryLog->addQuery($query);
+            if ($this->inTransaction) {
+                $this->transactionBuffer[] = $query;
+            } else {
+                $this->queryLog->addQuery($query);
+            }
+
             $statement = new PdoStatement();
             $statement->setResult($result);
 
@@ -125,6 +137,12 @@ class Pdo extends \PDO
      */
     private function getLastResult(): Result|bool
     {
+        if ($this->inTransaction && !empty($this->transactionBuffer)) {
+            $lastQuery = end($this->transactionBuffer);
+
+            return $this->mockedQueries->getResult($lastQuery);
+        }
+
         try {
             $lastQuery = $this->queryLog[count($this->queryLog) - 1];
         } catch (InvalidArgumentException) {
@@ -173,11 +191,21 @@ class Pdo extends \PDO
         $this->mockedQueries->addQuery($sql, $params, $expectedResults);
     }
 
+    public function bufferQuery(string $query): void
+    {
+        $this->transactionBuffer[] = $query;
+    }
+
     /**
      * @return ResultCollection
      */
     public function getMockedQueries(): ResultCollection
     {
         return $this->mockedQueries;
+    }
+
+    public function getQueryLog(): QueryLog
+    {
+        return $this->queryLog;
     }
 }

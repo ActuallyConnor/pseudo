@@ -182,6 +182,31 @@ class PdoQueries
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Transfers balance between two accounts within a transaction.
+     * Rolls back both operations if either fails.
+     */
+    public function transferBalance(int $fromId, int $toId, int $amount): bool
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            $debit = $this->pdo->prepare('UPDATE accounts SET balance = balance - ? WHERE id = ?');
+            $debit->execute([$amount, $fromId]);
+
+            $credit = $this->pdo->prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?');
+            $credit->execute([$amount, $toId]);
+
+            $this->pdo->commit();
+
+            return true;
+        } catch (RuntimeException $e) {
+            $this->pdo->rollBack();
+
+            return false;
+        }
+    }
+
     private static function parse(array $row): array
     {
         return [
