@@ -103,16 +103,44 @@ class ObjectsModelTest extends \PHPUnit\Framework\TestCase {
 }
 ```
 
+### Transactions
+
+Pseudo supports transactions. Queries executed inside a transaction are buffered and only written to the query log on
+`commit()`. Calling `rollBack()` discards the buffer, so those queries are never recorded. `lastInsertId()` resolves
+correctly from the buffer while a transaction is still open.
+
+```php
+$pdo = new Pseudo\Pdo();
+
+$pdo->mock('UPDATE accounts SET balance = balance - ? WHERE id = ?', [100, 1], true);
+$pdo->mock('UPDATE accounts SET balance = balance + ? WHERE id = ?', [100, 2], true);
+
+$pdo->beginTransaction();
+
+$debit = $pdo->prepare('UPDATE accounts SET balance = balance - ? WHERE id = ?');
+$debit->execute([100, 1]);
+
+$credit = $pdo->prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?');
+$credit->execute([100, 2]);
+
+$pdo->commit(); // both queries are now recorded in the query log
+```
+
+```php
+$pdo->beginTransaction();
+$stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
+$stmt->execute([42]);
+$pdo->rollBack(); // query is discarded — query log is unchanged
+```
+
 ### Supported features
 
-The internal storage of mocks and results are associatove arrays. Pseudo attempts to implement as much of the standard
-PDO feature set as possible, so varies different fetch modes, bindings, parameterized queries, etc. all work as you'd
-expect them to.
+The internal storage of mocks and results are associative arrays. Pseudo attempts to implement as much of the standard
+PDO feature set as possible, so various fetch modes, bindings, parameterized queries, transactions, etc. all work as
+you'd expect them to.
 
 ### Not implemented / wish-list items
 
-* The transaction api is implemented to the point of managing current transaction state, but transactions have no actual
-  effect
 * Anything related to scrolling cursors has not been implemented, and this includes the fetch modes that might require
   them
 * Pseudo can load and save serialized copies of it's mocked data, but in the future, it will be able to "record" a live
