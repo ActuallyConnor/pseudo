@@ -102,7 +102,6 @@ class PdoStatement extends \PDOStatement
         $maxLength = null,
         $driverOptions = null
     ): bool {
-        /** @phpstan-ignore-next-line */
         $this->boundParams[$param] =& $var;
 
         return true;
@@ -110,7 +109,6 @@ class PdoStatement extends \PDOStatement
 
     public function bindColumn($column, &$var, $type = null, $maxLength = null, $driverOptions = null): bool
     {
-        /** @phpstan-ignore-next-line */
         $this->boundColumns[$column] =& $var;
 
         return true;
@@ -118,7 +116,6 @@ class PdoStatement extends \PDOStatement
 
     public function bindValue($param, $value, $type = \PDO::PARAM_STR): bool
     {
-        /** @phpstan-ignore-next-line */
         $this->boundParams[$param] = $value;
 
         return true;
