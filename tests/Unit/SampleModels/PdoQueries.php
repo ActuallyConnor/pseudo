@@ -141,6 +141,47 @@ class PdoQueries
         }
     }
 
+    public function insertUser(string $name): int
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO users (name) VALUES (:name)');
+        $stmt->execute([':name' => $name]);
+
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function updateUserName(int $id, string $name): int
+    {
+        $stmt = $this->pdo->prepare('UPDATE users SET name = :name WHERE id = :id');
+        $stmt->execute([':name' => $name, ':id' => $id]);
+
+        return $stmt->rowCount();
+    }
+
+    public function getUserNameById(int $id): string|false
+    {
+        $stmt = $this->pdo->prepare('SELECT name FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+
+        return $stmt->fetchColumn();
+    }
+
+    public function getUserObjectById(int $id): object|false
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+
+        return $stmt->fetchObject();
+    }
+
+    public function getUsersWithBoundValue(int $minId): array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id > ?');
+        $stmt->bindValue(1, $minId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private static function parse(array $row): array
     {
         return [

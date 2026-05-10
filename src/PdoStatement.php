@@ -96,29 +96,26 @@ class PdoStatement extends \PDOStatement
     }
 
     public function bindParam(
-        $param,
+        int|string $param,
         &$var,
         $type = \PDO::PARAM_STR,
         $maxLength = null,
         $driverOptions = null
     ): bool {
-        /** @phpstan-ignore-next-line */
         $this->boundParams[$param] =& $var;
 
         return true;
     }
 
-    public function bindColumn($column, &$var, $type = null, $maxLength = null, $driverOptions = null): bool
+    public function bindColumn(int|string $column, &$var, $type = null, $maxLength = null, $driverOptions = null): bool
     {
-        /** @phpstan-ignore-next-line */
         $this->boundColumns[$column] =& $var;
 
         return true;
     }
 
-    public function bindValue($param, $value, $type = \PDO::PARAM_STR): bool
+    public function bindValue(int|string $param, $value, $type = \PDO::PARAM_STR): bool
     {
-        /** @phpstan-ignore-next-line */
         $this->boundParams[$param] = $value;
 
         return true;
