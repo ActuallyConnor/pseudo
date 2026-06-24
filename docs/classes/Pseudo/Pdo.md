@@ -59,6 +59,21 @@ private \Pseudo\QueryLog $queryLog
 
 ***
 
+### transactionBuffer
+
+
+
+```php
+private array$transactionBuffer
+```
+
+Holds query strings executed during an open transaction. Flushed to `$queryLog` on `commit()` and discarded on `rollBack()`.
+
+
+
+
+***
+
 ## Methods
 
 
@@ -411,6 +426,39 @@ public mock(string $sql, array&lt;int|string,mixed&gt;|null $params = null, mixe
 | `$params` | **array<int&#124;string,mixed>&#124;null** |  |
 | `$expectedResults` | **mixed** |  |
 
+
+
+
+
+***
+
+### bufferQuery
+
+Adds a query string to the transaction buffer. Called internally by `PdoStatement::execute()` when a transaction is
+open.
+
+```php
+public bufferQuery(string $query): void
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$query` | **string** |  |
+
+
+
+
+***
+
+### getQueryLog
+
+Returns the query log, which records all queries executed outside of (or committed from) a transaction.
+
+```php
+public getQueryLog(): \Pseudo\QueryLog
+```
 
 
 

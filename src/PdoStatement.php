@@ -29,12 +29,15 @@ class PdoStatement extends \PDOStatement
 
     private string $statement;
 
+    private ?Pdo $pdo;
+
     /**
      * @param  mixed  $result
      * @param  QueryLog|null  $queryLog
      * @param  string  $statement
+     * @param  Pdo|null  $pdo
      */
-    public function __construct(mixed $result = null, ?QueryLog $queryLog = null, string $statement = '')
+    public function __construct(mixed $result = null, ?QueryLog $queryLog = null, string $statement = '', ?Pdo $pdo = null)
     {
         if (!($result instanceof Result)) {
             $result = new Result();
@@ -45,6 +48,7 @@ class PdoStatement extends \PDOStatement
         }
         $this->queryLog  = $queryLog;
         $this->statement = $statement;
+        $this->pdo       = $pdo;
     }
 
     public function setResult(Result|bool $result): void
@@ -66,7 +70,12 @@ class PdoStatement extends \PDOStatement
     {
         $params = array_merge((array)$params, $this->boundParams);
         $this->result->setParams($params, !empty($this->boundParams));
-        $this->queryLog->addQuery($this->statement);
+
+        if ($this->pdo && $this->pdo->inTransaction()) {
+            $this->pdo->bufferQuery($this->statement);
+        } else {
+            $this->queryLog->addQuery($this->statement);
+        }
 
         if ($this->result->hasExecutionResult()) {
             return $this->result->getExecutionResult();
